@@ -117,8 +117,10 @@ All that is required to run this is [Docker](https://www.docker.com/) and [docke
 
 2. Update `.env` file values:
    - `DD_API_KEY` and `DD_APP_KEY` with your [Datadog API and Application keys](https://docs.datadoghq.com/account_management/api-app-keys/)
-     > [!IMPORTANT]
-     > Application key must be [scoped](https://docs.datadoghq.com/account_management/api-app-keys/#scope-application-keys) to have **read** capabilities to the account
+
+      > [!IMPORTANT]
+      > Application key must be [scoped](https://docs.datadoghq.com/account_management/api-app-keys/#scope-application-keys) to have **read** capabilities to the account
+
    - If your [Datadog Site value](https://docs.datadoghq.com/getting_started/site/#access-the-datadog-site) is the default of **US1** (`app.datadoghq.com`), skip this step. Otherwise, set `DD_HOST` to the **SITE URL** corresponding to your **SITE**
 
 3. Build a custom Docker image defined in the [docker-compose.yml](docker-compose.yml) build step:
@@ -135,12 +137,15 @@ All that is required to run this is [Docker](https://www.docker.com/) and [docke
     docker-compose run ddtf
     ```
 
-   > [!NOTE]
-   > If a subsequent run is required to include a missed resource or apply a configuration change,
-   > it is recommended that the generated files in the [terraform/datadog](terraform/datadog) directory be removed before proceeding.
-   >
-   > This will avoid unintentional duplication of resource definitions due to how files are imported and merged,
-   > and maintain the general cleanliness of the resulting files.
+    > [!NOTE]
+    > If a subsequent run is required to include a missed resource or apply a configuration change,
+    > it is recommended that the generated files in the `terraform/datadog` directory be removed before proceeding.
+    >
+    > This will avoid unintentional duplication of resource definitions due to how files are imported and merged,
+    > and maintain the general cleanliness of the resulting files.
+    > [!IMPORTANT]
+    > Ensure that the [providers.tf](terraform/providers.tf) file in the parent [terraform](terraform) directory is **not**
+    > deleted as part of this cleanup.
 
 ## Next Steps
 
@@ -148,7 +153,7 @@ Now that you have generated your desired Datadog resources as Terraform files, t
 can choose to make next steps towards.
 
 > [!TIP]
-> We recommend moving the generated files from `terraform/datadog` to another folder or repository;
+> We recommend moving the generated files from [terraform/datadog](terraform) to another folder or repository;
 > if you choose to run the code in this repository again, those will be overwritten.
 
 ### State Backends
@@ -156,8 +161,11 @@ can choose to make next steps towards.
 - Generally speaking, it is not desirable to store Terraform state files locally, as that could lead to accidentally committing
   credentials to a repository, or make collaboration difficult. After the files are generated, you may want to create a `backend.tf`
   file or add to `provider.tf` to establish one of the many [backends that Terraform provides](https://developer.hashicorp.com/terraform/language/settings/backends/configuration).
-- Once you have added a backend, such as Azure Storage or AWS S3, you will need to run `terraform init -migrate-state`. This will move the generated
-  state file to your configured backend.
+- Once you have added a backend, such as Azure Storage or AWS S3, you will need to move the generated state file to your configured backend:
+
+   ```bash
+   terraform init -migrate-state` 
+   ```
 
 ### Initialize Terraform for a resource type
 
@@ -230,14 +238,14 @@ can choose to make next steps towards.
     ```
 
   - This process is the same for monitors, just utilizing the appropriate files
-  > [!NOTE]
-  > If you are going to replace a dashboard/monitor that has already been imported in Terrafrom HCL,
-  > you will want to remove that entry from the file *before* applying the JSON change.  
-  > [!NOTE]
-  > Exporting a Datadog resource as JSON and then applying it with Terraform will cause a
-  > duplicate resource in Datadog, since the state was not imported. To avoid this, you can utilize
-  > the `terraform import` command which will update the state file appropriately.
-  > Example: `terraform import datadog_dashboard_json.example_dashboard abc-123-xyz`
+    > [!NOTE]
+    > If you are going to replace a dashboard/monitor that has already been imported in Terrafrom HCL,
+    > you will want to remove that entry from the file *before* applying the JSON change.  
+    > [!NOTE]
+    > Exporting a Datadog resource as JSON and then applying it with Terraform will cause a
+    > duplicate resource in Datadog, since the state was not imported. To avoid this, you can utilize
+    > the `terraform import` command which will update the state file appropriately.
+    > Example: `terraform import datadog_dashboard_json.example_dashboard abc-123-xyz`
 
 ## Known Issues
 
