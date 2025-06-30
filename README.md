@@ -107,7 +107,10 @@ All that is required to run this is [Docker](https://www.docker.com/) and [docke
 > [!TIP]
 > If you choose to use the files generated outside of this repository, you will also need to have [Terraform](https://developer.hashicorp.com/terraform/install) installed.
 
-## Configuration & Usage
+## Configuration
+
+> [!IMPORTANT]
+> Application key must be [scoped](https://docs.datadoghq.com/account_management/api-app-keys/#scope-application-keys) to have **read** capabilities to the account
 
 1. Rename the sample environment file [.env.sample](.env.sample) to become the default:
 
@@ -117,9 +120,6 @@ All that is required to run this is [Docker](https://www.docker.com/) and [docke
 
 2. Update `.env` file values:
    - `DD_API_KEY` and `DD_APP_KEY` with your [Datadog API and Application keys](https://docs.datadoghq.com/account_management/api-app-keys/)
-
-      > [!IMPORTANT]
-      > Application key must be [scoped](https://docs.datadoghq.com/account_management/api-app-keys/#scope-application-keys) to have **read** capabilities to the account
 
    - If your [Datadog Site value](https://docs.datadoghq.com/getting_started/site/#access-the-datadog-site) is the default of **US1** (`app.datadoghq.com`), skip this step. Otherwise, set `DD_HOST` to the **SITE URL** corresponding to your **SITE**
 
@@ -131,21 +131,26 @@ All that is required to run this is [Docker](https://www.docker.com/) and [docke
 
 4. Edit the [conf.yaml](conf.yaml) file to configure which datadog resources to import into Terraform (see [conf_example.yaml](conf_example.yaml) for more detail)
 
-5. Run the Docker image to execute the Datadog Terraform import process
+## Usage
 
-    ```bash
-    docker-compose run ddtf
-    ```
+### Initial Run
 
-    > [!NOTE]
-    > If a subsequent run is required to include a missed resource or apply a configuration change,
-    > it is recommended that the generated files in the `terraform/datadog` directory be removed before proceeding.
-    >
-    > This will avoid unintentional duplication of resource definitions due to how files are imported and merged,
-    > and maintain the general cleanliness of the resulting files.
-    > [!IMPORTANT]
-    > Ensure that the [providers.tf](terraform/providers.tf) file in the parent [terraform](terraform) directory is **not**
-    > deleted as part of this cleanup.
+Run the Docker image to execute the Datadog Terraform import process
+
+ ```bash
+ docker-compose run ddtf
+ ```
+
+### Subsequent Runs
+
+If a subsequent run is required to include a missed resource or apply a configuration change,
+it is recommended that the generated files in the `terraform/datadog` directory be removed before proceeding.
+This will avoid unintentional duplication of resource definitions due to how files are imported and merged,
+and maintain the general cleanliness of the resulting files.
+
+> [!IMPORTANT]
+> Ensure that the [providers.tf](terraform/providers.tf) file in the parent [terraform](terraform) directory is **not**
+> deleted as part of this cleanup.
 
 ## Next Steps
 
@@ -193,6 +198,10 @@ can choose to make next steps towards.
 
 ### Add New Dashboards via JSON
 
+> [!NOTE]
+> If you are going to replace a dashboard/monitor that has already been imported in HCL,
+> you will want to remove that entry from the Terraform file *before* applying the JSON change.  
+
 - Admittedly, the generated Terraform files for monitors and dashboards can be clunky, large, and difficult to understand how and where
   changes are made. The good news is that monitors and dashboards (only) can be exported from Datadog as JSON and then established within
   the Terraform files in the same format. This allows a user to go and make graphical changes in the UI, export the results, and then
@@ -238,14 +247,12 @@ can choose to make next steps towards.
     ```
 
   - This process is the same for monitors, just utilizing the appropriate files
-    > [!NOTE]
-    > If you are going to replace a dashboard/monitor that has already been imported in Terrafrom HCL,
-    > you will want to remove that entry from the file *before* applying the JSON change.  
-    > [!NOTE]
-    > Exporting a Datadog resource as JSON and then applying it with Terraform will cause a
-    > duplicate resource in Datadog, since the state was not imported. To avoid this, you can utilize
-    > the `terraform import` command which will update the state file appropriately.
-    > Example: `terraform import datadog_dashboard_json.example_dashboard abc-123-xyz`
+
+> [!NOTE]
+> Exporting a Datadog resource as JSON and then applying it with Terraform will cause a
+> duplicate resource in Datadog, since the state was not imported. To avoid this, you can utilize
+> the `terraform import` command which will update the state file appropriately.
+> Example: `terraform import datadog_dashboard_json.example_dashboard abc-123-xyz`
 
 ## Known Issues
 
