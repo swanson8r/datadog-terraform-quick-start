@@ -10,7 +10,7 @@
 #   dashboards and monitors will only import specified objects.
 #
 #   Removing a resource type will cause all of the resources belonging to the type to NOT
-#   be imported (unless "all") is present in the list. There are some exceptions; these will
+#   be imported (unless "all" is present in the list). There are some exceptions; these will
 #   be listed where appropriate.
 
 

@@ -1,2 +1,4 @@
 PyYAML==6.0.1
 schema==0.7.5
+# Minimum version required for Datadog Provider if using the files generated outside of this repository 
+# terraform>=0.12.x 
