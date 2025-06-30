@@ -311,11 +311,12 @@ open source tools.
 
 ### Not intended to be run regularly
 
-- As stated in [What Doesn't This Do?](#what-doesnt-this-do), this repository is meant for an initial quick-start import.
+- As stated in [What Doesn't This Do?](#what-doesnt-this-do), this repository is meant for an initial quick-start import. 
 
 > [!WARNING]
-> This is **not** meant to be a regularly run process,
+> This Quick Start repositiory is **not** meant to be a regularly run process,
 > and if used as such may cause unintentional behavior within the management of Datadog resources.
+> See [Next Steps > CI](#ci) for suggestions.
 
 ## Support
 
