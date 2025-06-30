@@ -58,10 +58,12 @@ There are several reasons to consider using this tool, and probably more that we
 ## What Does This Do, and How Does It Work?
 
 The quick start is powered by [Terraform](https://www.terraform.io/), [Terraformer](https://github.com/GoogleCloudPlatform/terraformer),
-the [Datadog Terraform provider](https://registry.terraform.io/providers/DataDog/datadog/latest/docs), [Docker Compose](https://github.com/docker/compose), and some custom scripting.
+the [Datadog Terraform provider](https://registry.terraform.io/providers/DataDog/datadog/latest/docs),
+[Docker Compose](https://github.com/docker/compose), and some custom scripting.
 
-Terraformer utilizes Terraform and the Datadog provider to convert Datadog API responses into Terraform files along with their current
-state. The custom scripting manipulates those files to address some of the limitations of Terraformer itself, in addition to executing
+Terraformer utilizes Terraform and the Datadog provider to convert Datadog API responses into Terraform files along with their current state
+(for details, see [Importing Datadog Resources into Terraform](https://docs.datadoghq.com/containers/guide/how-to-import-datadog-resources-into-terraform/#terraformer)).
+The custom scripting manipulates those files to address some of the limitations of Terraformer itself, in addition to executing
 the Terraformer commands required to pull down Datadog resources based on the provided configuration.
 
 The end result is a `tree` of files similar to this example:
@@ -150,7 +152,7 @@ and maintain the general cleanliness of the resulting files.
 
 > [!IMPORTANT]
 > Ensure that the [providers.tf](terraform/providers.tf) file in the parent [terraform](terraform) directory is **not**
-> deleted as part of this cleanup.
+> deleted as part of this cleanup
 
 ## Next Steps
 
@@ -158,25 +160,25 @@ Now that you have generated your desired Datadog resources as Terraform files, t
 can choose to make next steps towards.
 
 > [!TIP]
-> We recommend moving the generated files from [terraform/datadog](terraform) to another folder or repository;
-> if you choose to run the code in this repository again, those will be overwritten.
+> We recommend moving the generated files from `terraform/datadog`](terraform) to another folder or repository;
+> if you choose to run the code in this repository again, those will be overwritten
 
 ### State Backends
 
 - Generally speaking, it is not desirable to store Terraform state files locally, as that could lead to accidentally committing
   credentials to a repository, or make collaboration difficult. After the files are generated, you may want to create a `backend.tf`
-  file or add to `provider.tf` to establish one of the many [backends that Terraform provides](https://developer.hashicorp.com/terraform/language/settings/backends/configuration).
-- Once you have added a backend, such as Azure Storage or AWS S3, you will need to move the generated state file to your configured backend:
+  file or add to [provider.tf](terraform/provider.tf) to establish one of the many [Remote State Backends that Terraform provides](https://developer.hashicorp.com/terraform/language/backend)
+- Once you have configured a remote backend (such as [Azure Storage](https://developer.hashicorp.com/terraform/language/backend/azurerm) or [AWS S3](https://developer.hashicorp.com/terraform/language/backend/s3)), you will need to migrate the locally generated state file there:
 
    ```bash
-   terraform init -migrate-state` 
+   terraform init -migrate-state 
    ```
 
 ### Initialize Terraform for a resource type
 
-- Each type of resource contains its own state file, and is managed independently. In order to be able to
-  utilize Terraform to manage these, Terraform will need to be initialized within that directory. To do so, enter
-  the resource directory and execute `terraform init`. You will now be able to run additional Terraform commands.
+- Each type of resource contains its own state file, and is managed independently
+  - In order to be able to manage these with Terraform, it will need to be initialized *within* the resource directory by executing `terraform init`
+  - You will now be able to run additional Terraform commands scoped to this resource
 
 ### CI
 
@@ -185,16 +187,16 @@ can choose to make next steps towards.
   team. A common process would look something like this:
   - User enters a merge/pull request to the repository with a change to a resource
   - A job detects a change to that resource type, and runs a `terraform plan` against the resource to show the
-    user or reviewer exactly what would change, and ensure nothing is done unintentionally.
+    user or reviewer exactly what would change, and ensure nothing is done unintentionally
   - The change is reviewed, approved, and merged
   - Another set of jobs runs to apply the changes and commit the new state
 
 ### Separate Management Responsibilities
 
 - While this repository is intended to be used for grabbing large sets of resources based on configuration at a time, it is also possible
-  to utilize it multiple times for smaller sets. As an example, consider utilizing this tooling to pull down monitors on a team tag by team
-  tag basis, and then moving the generated files out to a team specific directory or repository. This can allow for distinct management
-  on a team by team or app by app basis without a monolithic type monitoring repository.
+  to utilize it multiple times for smaller sets.
+  - Example: Terraform Monitor configurations can be broken out for management by their owning teams; Utilize this tooling to pull down monitors for one team tag at a time, and then move the generated files out to a team-specific directory or separate repository. This can allow for distinct management
+  on a team by team or app by app basis and reduce the need for a monolithic type monitoring repository to shared resources only.
 
 ### Add New Dashboards via JSON
 
@@ -203,10 +205,11 @@ can choose to make next steps towards.
 > you will want to remove that entry from the Terraform file *before* applying the JSON change.  
 
 - Admittedly, the generated Terraform files for monitors and dashboards can be clunky, large, and difficult to understand how and where
-  changes are made. The good news is that monitors and dashboards (only) can be exported from Datadog as JSON and then established within
+  changes are made.
+  - The good news is that monitors and dashboards (only) can be exported from Datadog as JSON and then established within
   the Terraform files in the same format. This allows a user to go and make graphical changes in the UI, export the results, and then
-  recommit the changes to the repository. There are a few ways to go about this, but the following is a suggested method.
-- Given the following structure:
+  recommit the changes to the repository.
+- There are a few ways to go about this, but the following is a suggested method. Given the following structure:
 
    ```bash
     .
@@ -266,18 +269,21 @@ open source tools.
 
 ### GCP integration importing
 
-- As of time of writing, Terraformer has not caught up with the change to how GCP accounts are
-  added to Datadog, and as a result, GCP accounts cannot be imported directly. The good news is that
-  creating the required Terraform definitions for these is not overly complicated, and documentation
-  for doing such [can be found here](https://registry.terraform.io/providers/DataDog/datadog/latest/docs/resources/integration_gcp)
+- As of time of writing, Terraformer has not caught up with the change to how
+ [GCP](https://github.com/GoogleCloudPlatform/terraformer/blob/master/docs/gcp.md) accounts are
+  added to Datadog, and as a result, GCP accounts cannot be imported directly.
+  - The good news is that creating the required Terraform definitions for these is not overly complicated, and documentation
+  for doing such [can be found here](https://registry.terraform.io/providers/DataDog/datadog/latest/docs/resources/integration_gcp_sts)
 
 ### Monitor Downtime importing
 
-- Due to API changes as of time of writing, Terraformer is not up to date with importing Monitor downtimes
+- Due to API changes as of time of writing, Terraformer is not up to date with importing [Monitor downtimes](https://docs.datadoghq.com/api/latest/downtimes/)
 
 ### PagerDuty schedules
 
-- Due to API changes as of time of writing, Terraformer is not up to date with importing PagerDuty Schedules (services work, however)
+- Due to API changes as of time of writing, [Terraformer](https://github.com/GoogleCloudPlatform/terraformer/blob/master/docs/pagerduty.md)
+ is not up to date with importing
+ [PagerDuty Schedules](https://registry.terraform.io/providers/PagerDuty/pagerduty/latest/docs/resources/schedule) (services work, however)
 
 ### Terraformer/Datadog Provider performance
 
@@ -292,7 +298,8 @@ open source tools.
 
 ## Support
 
-Have a question, need some help, or want to report a bug? Please enter an [issue](https://github.com/nobstech/datadog-terraform-quick-start/issues) within the repository.
+Have a question, need some help, or want to report a bug?
+Please enter an [issue](https://github.com/nobstech/datadog-terraform-quick-start/issues) within the repository.
 
 Need more help than we can give through an Issue? [Head over to our website and get in touch!](https://www.nobs.tech/contact)
 
