@@ -14,4 +14,4 @@ COPY requirements.txt .
 
 RUN pip install -r requirements.txt
 
-COPY conf.yaml execute.sh example_conf.yaml ./
+COPY conf.yaml execute.sh conf_example.yaml ./
