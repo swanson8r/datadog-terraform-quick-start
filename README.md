@@ -142,6 +142,10 @@ All that is required to run this is [docker-compose](https://docs.docker.com/com
 4. Edit the [conf.yaml](conf.yaml) file to configure which datadog resources to import into Terraform
    - see [conf_example.yaml](conf_example.yaml) for more detail
 
+> [!NOTE]
+> While changes to [conf.yaml](conf.yaml) may be commited to this repo, the `.env` file is excluded
+> in [.gitignore](.gitignore) due to the sensitive keys it contains.
+
 ## Usage
 
 ### Initial Run
@@ -311,7 +315,7 @@ open source tools.
 
 ### Not intended to be run regularly
 
-- As stated in [What Doesn't This Do?](#what-doesnt-this-do), this repository is meant for an initial quick-start import. 
+- As stated in [What Doesn't This Do?](#what-doesnt-this-do), this repository is meant for an initial quick-start import.
 
 > [!WARNING]
 > This Quick Start repositiory is **not** meant to be a regularly run process,
