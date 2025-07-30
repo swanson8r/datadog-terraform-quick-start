@@ -160,6 +160,11 @@ Run the Docker image to execute the Datadog Terraform import process
 
 If a subsequent run is required to include a missed resource or apply a configuration change,
 it is recommended that the generated files in the `terraform/datadog` directory be removed before proceeding.
+
+```bash
+rm -rf terraform/datadog
+```
+
 This will avoid unintentional duplication of resource definitions due to how files are imported and merged,
 and maintain the general cleanliness of the resulting files.
 

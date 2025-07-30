@@ -207,7 +207,7 @@ if __name__ == "__main__":
 
     if "all" in config_resources:
         logger.info('Found "all" in configuration; importing all supported resources.')
-        write_command("--resources=*")
+        write_command("{provider}/{service}","*")
         sys.exit(0)
 
     no_ids = [

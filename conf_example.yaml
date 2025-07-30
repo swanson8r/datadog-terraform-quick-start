@@ -3,9 +3,12 @@
 #   of Datadog resources. There are several options depending on the resource,
 #   or no options at all for others. Please see each resource type for examples.
 #
-#   Not providing any options will import all resources of the type. Example:
-#     dashboard:
-#     monitor:
+#   Not providing any options will import all resources of the type.
+#   An empty list must be passed instead of options to avoid errors on returning null.
+#   Example:
+#   resources:
+#     - dashboard: []
+#     - monitor: []
 #   Will import ALL dashboards and all monitors, whereas the below examples for 
 #   dashboards and monitors will only import specified objects.
 #
