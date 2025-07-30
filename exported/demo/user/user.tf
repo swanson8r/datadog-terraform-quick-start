@@ -1,6 +1,6 @@
 resource "datadog_user" "user_bfe873e1-5687-11f0-a0a3-ce3e376c4195" {
   disabled = "false"
-  email    = "swanson.eric.m+dd_read@gmail.com"
+  email    = "" # manually redacted
   name     = "DD_READ"
   roles    = ["${data.terraform_remote_state.role.outputs.datadog_role_role_d420d5ec-5678-11f0-8b66-da7ad0900002_id}"]
 }
