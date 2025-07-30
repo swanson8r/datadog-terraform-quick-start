@@ -56,7 +56,7 @@ def state_move(resource_type, res_dir):
                 logger.info(result.stdout)
             except Exception:
                 if "Invalid target address" in result.stderr:
-                    logger.warn(
+                    logger.warning(
                         f"Duplicate resource {res} found, removing from TF file"
                     )
                     remove_tf_resource(resource_type, res_dir, res)

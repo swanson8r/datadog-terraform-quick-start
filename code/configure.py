@@ -161,7 +161,7 @@ def run_command(command, retries=3):
         logger.info(output.stdout)
     except:
         if retries > 0:
-            logger.warn(
+            logger.warning(
                 f'Command "{command}" failed with error {output.stdout}, {retries} retries left...retrying'
             )
             run_command(command, retries=retries - 1)
